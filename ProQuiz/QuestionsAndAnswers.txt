@@ -1,0 +1,3 @@
+En iyi programlama dili hangisidir?: python
+En popüler programlama dili hangisidir?: python
+En çok kazandıran programlama dili hangisidir?: python
