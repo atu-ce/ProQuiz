@@ -8,8 +8,14 @@ class Question:
     def checkAnswer(self, answer):
         return self.answer == answer
 
+    def getAnswer(self):
+        return self.answer
+
 # Quiz
 class Quiz:
+    trueAnswers = []
+    falseAnswers = []
+
     def __init__(self, questions):
         self.questions = questions
         self.score = 0
@@ -35,6 +41,9 @@ class Quiz:
 
         if question.checkAnswer(answer):
             self.score += 1
+            self.isTrue(answer)
+        else:
+            self.isFalse(answer)
 
         self.questionIndex += 1
 
@@ -48,22 +57,47 @@ class Quiz:
 
     # Quizi bitirir ve kullanıcıya skorunu gösterir.
     def showScore(self):
+        print(" Results ".center(100, '*'))
         print(f"Quiz bitti. Score: {self.score}")
+
+        print("\nDoğru cevaplarınız:")
+        for i in self.trueAnswers:
+            print(i)
+
+        print("\nYanlış cevaplarınız:")
+        for i in self.falseAnswers:
+            print(i)
+
+        print(" Finish ".center(100,'*'))
 
     # Kullanıcıya kaç sorudan kaçıncıda olduğunu gösterir.
     def disPlayProgress(self):
         totalQuestion = len(self.questions)
         questionNumber = self.questionIndex + 1
 
-        print(f"Question {questionNumber} of {totalQuestion}".center(100, '*'))
+        print(f" Question {questionNumber} of {totalQuestion} ".center(100, '*'))
+    
+    # Kullanıcıya hangi soruya doğru, hangisine yanlış cevap verdiğini göstermeliyiz;
+    # ** Doğru ise bu fonksiyon çalışır.
+    def isTrue(self, answer):
+        question = self.getQuestion()
+        self.trueAnswers.append(f"{self.questionIndex + 1}. soru ({answer}).")
 
+    # ** Yanlış ise bu fonksiyon çalışır.
+    def isFalse(self, answer):
+        question = self.getQuestion()
+        getAnswer = question.getAnswer()
+        self.falseAnswers.append(f"{self.questionIndex + 1}. soru ({answer}), doğru cevap: {getAnswer}.")
+
+# 1'e basıldığında bu fonksiyon çalışır. Yeni soru ekler.
 def questionAppend():
-    soru = input("Soru: ")
-    cevap = input("Cevap: ")
+    soru = input("Soru: ").strip()
+    cevap = input("Cevap: ").lower().strip()
 
     with open("QuestionsAndAnswers.txt", "a", encoding = "utf-8") as dosya:
         dosya.write(f"{soru}: {cevap}\n")
 
+# 2'ye basıldığında bu fonksiyon çalışır. Quizi başlatır.
 def quizStart():
     questions = []
     with open("QuestionsAndAnswers.txt", "r", encoding = "utf-8") as dosya:
@@ -76,6 +110,7 @@ def quizStart():
     quiz = Quiz(questions)
     quiz.loadQuestion()
 
+# Menünün oluşturulduğu bölüm
 while True:
     islem = input("1.) Soru ekle\n2.) Sınava başla\n3.) Çıkış\n")
 
