@@ -1,3 +1,6 @@
+import datetime
+import os
+
 # Question
 class Question:
     def __init__(self, text, answer):
@@ -15,6 +18,8 @@ class Question:
 class Quiz:
     trueAnswers = []
     falseAnswers = []
+    name = []
+    surname = []
 
     def __init__(self, questions):
         self.questions = questions
@@ -50,6 +55,7 @@ class Quiz:
     # İndex aşımını kontrol eder.
     def loadQuestion(self):
         if len(self.questions) == self.questionIndex:
+            self.create()
             self.showScore()
         else:
             self.disPlayProgress()
@@ -89,6 +95,48 @@ class Quiz:
         getAnswer = question.getAnswer()
         self.falseAnswers.append(f"{self.questionIndex + 1}. soru ({answer}), doğru cevap: {getAnswer}.")
 
+    # Kullanıcıdan isim-soyisim istenir ve gelen değer ile klasör oluşturulur.
+    def kayitOl(self):
+        isim = input("İsim: ").lower().strip()
+        soyisim = input("Soyisim: ").lower().strip()
+
+        path = f"/AhmetTayyip/Python/ProQuiz/users/{isim}_{soyisim}"
+
+        try:
+            os.mkdir(path)
+        except OSError:
+            print ("%s kullanıcısı oluşturulamadı" % path)
+        else:
+            print ("%s kullanıcısı başarıyla oluşturuldu" % path)
+
+        self.name.append(isim)
+        self.surname.append(soyisim)
+
+    def girisYap(self):
+        isim = input("İsim: ").lower().strip()
+        soyisim = input("Soyisim: ").lower().strip()
+
+        self.name.append(f"{isim}")
+        self.surname.append(f"{soyisim}")
+
+    # Sınav bitiminde bu fonksiyon çalışır, giriş yapan kullanıcının klasörüne o anki 'tarih-saat.txt' dosyası oluşturulur ve doğru-cevap tablosu dosyaya eklenir.
+    def create(self):
+        now = datetime.datetime.now()
+        tarih = datetime.datetime.strftime(now, '%d_%m_%Y') # Gün_Ay_Yıl
+        saat = str(now.hour) + "_" + str(now.minute) + "_" + str(now.second)
+
+        with open(f"users\{self.name[0]}_{self.surname[0]}\{tarih}_{saat}.txt", "a", encoding = "utf-8") as dosya:
+            dosya.write("Doğru cevaplarınız:\n")
+
+            for i in self.trueAnswers:
+                dosya.write(f"{i}\n")
+
+            dosya.write("\nYanlış cevaplarınız:\n")
+            for i in self.falseAnswers:
+                dosya.write(f"{i}\n")
+
+            dosya.write("\n")
+
 # 1'e basıldığında bu fonksiyon çalışır. Yeni soru ekler.
 def questionAppend():
     soru = input("Soru: ").strip()
@@ -115,10 +163,29 @@ while True:
     islem = input("1.) Soru ekle\n2.) Sınava başla\n3.) Çıkış\n")
 
     if islem   == "1":
-        questionAppend()
+        # Soru eklemeyi sadece admin and editor yapabilmesi için gerekli kod dizini.
+        access = input("Username(admin/editor): ").lower().strip()
+        password = input("password(112233): ").strip()
+        if ((access == "admin") or (access == "editor")) and (password == "112233"):
+            questionAppend()
+        else:
+            print("Yanlış değer girdiniz.")
 
     elif islem == "2":
+        while True:
+            user = input("1.) Kayıt ol\n2.) Giriş yap\n")
+
+            if user == "1":
+                Quiz(True).kayitOl()
+                break
+            elif user == "2":
+                Quiz(True).girisYap()
+                break
+            else:
+                print("Yanlış değer girdiniz. Lütfen tekrar deneyiniz.")
+
         quizStart()
+        break
 
     elif islem == "3":
         break
