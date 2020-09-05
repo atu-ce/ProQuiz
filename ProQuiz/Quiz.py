@@ -119,7 +119,7 @@ class Quiz:
         self.name.append(f"{isim}")
         self.surname.append(f"{soyisim}")
 
-    # Sınav bitiminde bu fonksiyon çalışır, giriş yapan kullanıcının klasörüne o anki 'tarih-saat.txt' dosyası oluşturulur ve doğru-cevap tablosu dosyaya eklenir.
+    # Sınav bitiminde bu fonksiyon çalışır, giriş yapan kullanıcının klasörüne o anki 'tarih-saat.txt' dosyası oluşturulur ve doğru-yanlış cevap tablosu dosyaya eklenir.
     def create(self):
         now = datetime.datetime.now()
         tarih = datetime.datetime.strftime(now, '%d_%m_%Y') # Gün_Ay_Yıl
