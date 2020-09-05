@@ -1,0 +1,8 @@
+Doğru cevaplarınız:
+1. soru (python).
+2. soru (python).
+4. soru (django).
+
+Yanlış cevaplarınız:
+3. soru (c#), doğru cevap: python.
+
