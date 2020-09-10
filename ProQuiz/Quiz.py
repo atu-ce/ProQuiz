@@ -1,6 +1,16 @@
 import datetime
 import os
 
+isStarted = False
+
+def registrationFailed():
+    global isStarted
+    isStarted = False
+
+def userCreated():
+    global isStarted
+    isStarted = True
+
 # Question
 class Question:
     def __init__(self, text, answer):
@@ -100,24 +110,34 @@ class Quiz:
         isim = input("İsim: ").lower().strip()
         soyisim = input("Soyisim: ").lower().strip()
 
-        path = f"/AhmetTayyip/Python/ProQuiz/users/{isim}_{soyisim}"
+        way = os.path.dirname(os.path.abspath(__file__))
+        path = f"{way}/users/{isim}_{soyisim}"
 
         try:
             os.mkdir(path)
-        except OSError:
-            print ("%s kullanıcısı oluşturulamadı" % path)
+        except OSError as err:
+            print (f"{isim}_{soyisim} kullanıcısı {err} nedeninden dolayı oluşturulamadı")
+            registrationFailed()
         else:
-            print ("%s kullanıcısı başarıyla oluşturuldu" % path)
+            print (f"{isim}_{soyisim} kullanıcısı başarıyla oluşturuldu")
+            userCreated()
 
         self.name.append(isim)
         self.surname.append(soyisim)
 
     def girisYap(self):
+        global isStarted
         isim = input("İsim: ").lower().strip()
         soyisim = input("Soyisim: ").lower().strip()
 
-        self.name.append(f"{isim}")
-        self.surname.append(f"{soyisim}")
+        way = os.path.dirname(os.path.abspath(__file__))
+        path = f"{way}/users/{isim}_{soyisim}"
+
+        if f"{isim}_{soyisim}" == os.path.basename(path):
+            isStarted = True
+
+        self.name.append(isim)
+        self.surname.append(soyisim)
 
     # Sınav bitiminde bu fonksiyon çalışır, giriş yapan kullanıcının klasörüne o anki 'tarih-saat.txt' dosyası oluşturulur ve doğru-yanlış cevap tablosu dosyaya eklenir.
     def create(self):
@@ -184,7 +204,8 @@ while True:
             else:
                 print("Yanlış değer girdiniz. Lütfen tekrar deneyiniz.")
 
-        quizStart()
+        if isStarted:
+            quizStart()
         break
 
     elif islem == "3":
