@@ -120,6 +120,10 @@ class Quiz:
             registrationFailed()
         else:
             print (f"{isim}_{soyisim} kullanıcısı başarıyla oluşturuldu")
+
+            with open("loginInquiry.txt", "a", encoding = "utf-8") as dosya:
+                dosya.write(f"{isim}_{soyisim}\n")
+
             userCreated()
 
         self.name.append(isim)
@@ -130,11 +134,14 @@ class Quiz:
         isim = input("İsim: ").lower().strip()
         soyisim = input("Soyisim: ").lower().strip()
 
-        way = os.path.dirname(os.path.abspath(__file__))
-        path = f"{way}/users/{isim}_{soyisim}"
-
-        if f"{isim}_{soyisim}" == os.path.basename(path):
-            isStarted = True
+        with open("loginInquiry.txt", "r", encoding = "utf-8") as dosya:
+            for i in dosya:
+                user = i[: -1]
+                if f"{isim}_{soyisim}" == user:
+                    isStarted = True
+                    break
+            else:
+                print(f"Girmiş olduğunuz {isim}_{soyisim} adında kullanıcı sistemde kayıtlı değildir.")
 
         self.name.append(isim)
         self.surname.append(soyisim)
