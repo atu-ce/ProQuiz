@@ -134,14 +134,21 @@ class Quiz:
         isim = input("İsim: ").lower().strip()
         soyisim = input("Soyisim: ").lower().strip()
 
-        with open("loginInquiry.txt", "r", encoding = "utf-8") as dosya:
-            for i in dosya:
-                user = i[: -1]
-                if f"{isim}_{soyisim}" == user:
-                    isStarted = True
-                    break
+        while True:
+            try:
+                with open("loginInquiry.txt", "r", encoding = "utf-8") as dosya:
+                    for i in dosya:
+                        user = i[: -1]
+                        if f"{isim}_{soyisim}" == user:
+                            isStarted = True
+                            break
+                    else:
+                        print(f"Girmiş olduğunuz {isim}_{soyisim} adında kullanıcı sistemde kayıtlı değildir.")
+            except:
+                with open("loginInquiry.txt", "x", encoding = "utf-8") as dosya:
+                    pass
             else:
-                print(f"Girmiş olduğunuz {isim}_{soyisim} adında kullanıcı sistemde kayıtlı değildir.")
+                break
 
         self.name.append(isim)
         self.surname.append(soyisim)
