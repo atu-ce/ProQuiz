@@ -112,6 +112,7 @@ class Quiz:
 
         way = os.path.dirname(os.path.abspath(__file__))
         path = f"{way}/users/{isim}_{soyisim}"
+        path = path.replace('\\', '/')
 
         try:
             os.mkdir(path)
