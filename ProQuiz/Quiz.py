@@ -3,19 +3,23 @@ import os
 
 isStarted = False
 
+
 def registrationFailed():
     global isStarted
     isStarted = False
+
 
 def userCreated():
     global isStarted
     isStarted = True
 
 # Question
+
+
 class Question:
     def __init__(self, text, answer):
-        self.text    = text
-        self.answer  = answer
+        self.text = text
+        self.answer = answer
 
     # Kullanıcının verdiği cevabın doğruluğunu ölçer.
     def checkAnswer(self, answer):
@@ -25,6 +29,8 @@ class Question:
         return self.answer
 
 # Quiz
+
+
 class Quiz:
     trueAnswers = []
     falseAnswers = []
@@ -46,7 +52,7 @@ class Quiz:
         print(f"Soru {self.questionIndex + 1}: {question.text}")
 
         answer = input("Cevap: ").lower().strip()
-        self.guess(answer) # guess -> tahmin
+        self.guess(answer)  # guess -> tahmin
         self.loadQuestion()
 
     # Bu fonksiyonun amacı, koşulsuz index numarasını arttırmak ve
@@ -84,15 +90,16 @@ class Quiz:
         for i in self.falseAnswers:
             print(i)
 
-        print(" Finish ".center(100,'*'))
+        print(" Finish ".center(100, '*'))
 
     # Kullanıcıya kaç sorudan kaçıncıda olduğunu gösterir.
     def disPlayProgress(self):
         totalQuestion = len(self.questions)
         questionNumber = self.questionIndex + 1
 
-        print(f" Question {questionNumber} of {totalQuestion} ".center(100, '*'))
-    
+        print(
+            f" Question {questionNumber} of {totalQuestion} ".center(100, '*'))
+
     # Kullanıcıya hangi soruya doğru, hangisine yanlış cevap verdiğini göstermeliyiz;
     # ** Doğru ise bu fonksiyon çalışır.
     def isTrue(self, answer):
@@ -103,7 +110,8 @@ class Quiz:
     def isFalse(self, answer):
         question = self.getQuestion()
         getAnswer = question.getAnswer()
-        self.falseAnswers.append(f"{self.questionIndex + 1}. soru ({answer}), doğru cevap: {getAnswer}.")
+        self.falseAnswers.append(
+            f"{self.questionIndex + 1}. soru ({answer}), doğru cevap: {getAnswer}.")
 
     # Kullanıcıdan isim-soyisim istenir ve gelen değer ile klasör oluşturulur.
     def kayitOl(self):
@@ -111,18 +119,25 @@ class Quiz:
         soyisim = input("Soyisim: ").lower().strip()
 
         way = os.path.dirname(os.path.abspath(__file__))
-        path = f"{way}/users/{isim}_{soyisim}"
-        path = path.replace('\\', '/')
+
+        if os.path.isfile(f"{way}/users"):
+            path = f"{way}/users/{isim}_{soyisim}"
+            path = path.replace('\\', '/')
+        else:
+            os.mkdir(f"{way}/users")
+            path = f"{way}/users/{isim}_{soyisim}"
+            path = path.replace('\\', '/')
 
         try:
             os.mkdir(path)
         except OSError as err:
-            print (f"{isim}_{soyisim} kullanıcısı {err} nedeninden dolayı oluşturulamadı")
+            print(
+                f"{isim}_{soyisim} kullanıcısı {err} nedeninden dolayı oluşturulamadı")
             registrationFailed()
         else:
-            print (f"{isim}_{soyisim} kullanıcısı başarıyla oluşturuldu")
+            print(f"{isim}_{soyisim} kullanıcısı başarıyla oluşturuldu")
 
-            with open("loginInquiry.txt", "a", encoding = "utf-8") as dosya:
+            with open("loginInquiry.txt", "a", encoding="utf-8") as dosya:
                 dosya.write(f"{isim}_{soyisim}\n")
 
             userCreated()
@@ -137,16 +152,17 @@ class Quiz:
 
         while True:
             try:
-                with open("loginInquiry.txt", "r", encoding = "utf-8") as dosya:
+                with open("loginInquiry.txt", "r", encoding="utf-8") as dosya:
                     for i in dosya:
                         user = i[: -1]
                         if f"{isim}_{soyisim}" == user:
                             isStarted = True
                             break
                     else:
-                        print(f"Girmiş olduğunuz {isim}_{soyisim} adında kullanıcı sistemde kayıtlı değildir.")
+                        print(
+                            f"Girmiş olduğunuz {isim}_{soyisim} adında kullanıcı sistemde kayıtlı değildir.")
             except:
-                with open("loginInquiry.txt", "x", encoding = "utf-8") as dosya:
+                with open("loginInquiry.txt", "x", encoding="utf-8") as dosya:
                     pass
             else:
                 break
@@ -157,10 +173,12 @@ class Quiz:
     # Sınav bitiminde bu fonksiyon çalışır, giriş yapan kullanıcının klasörüne o anki 'tarih-saat.txt' dosyası oluşturulur ve doğru-yanlış cevap tablosu dosyaya eklenir.
     def create(self):
         now = datetime.datetime.now()
-        tarih = datetime.datetime.strftime(now, '%d_%m_%Y') # Gün_Ay_Yıl
+        tarih = datetime.datetime.strftime(now, '%d_%m_%Y')  # Gün_Ay_Yıl
         saat = str(now.hour) + "_" + str(now.minute) + "_" + str(now.second)
 
-        with open(f"users\{self.name[0]}_{self.surname[0]}\{tarih}_{saat}.txt", "a", encoding = "utf-8") as dosya:
+        way = os.path.dirname(os.path.abspath(__file__))
+
+        with open(f"{way}/users/{self.name[0]}_{self.surname[0]}/{tarih}_{saat}.txt", "a", encoding="utf-8") as dosya:
             dosya.write("Doğru cevaplarınız:\n")
 
             for i in self.trueAnswers:
@@ -173,19 +191,23 @@ class Quiz:
             dosya.write("\n")
 
 # 1'e basıldığında bu fonksiyon çalışır. Yeni soru ekler.
+
+
 def questionAppend():
     soru = input("Soru: ").strip()
     cevap = input("Cevap: ").lower().strip()
 
-    with open("QuestionsAndAnswers.txt", "a", encoding = "utf-8") as dosya:
+    with open("QuestionsAndAnswers.txt", "a", encoding="utf-8") as dosya:
         dosya.write(f"{soru}: {cevap}\n")
 
 # 2'ye basıldığında bu fonksiyon çalışır. Quizi başlatır.
+
+
 def quizStart():
     questions = []
-    with open("QuestionsAndAnswers.txt", "r", encoding = "utf-8") as dosya:
+    with open("QuestionsAndAnswers.txt", "r", encoding="utf-8") as dosya:
         for satir in dosya:
-            satir = satir[ : -1]
+            satir = satir[: -1]
             liste = satir.split(":")
 
             questions.append(Question(liste[0], liste[1].lower().strip()))
@@ -193,11 +215,12 @@ def quizStart():
     quiz = Quiz(questions)
     quiz.loadQuestion()
 
+
 # Menünün oluşturulduğu bölüm
 while True:
     islem = input("1.) Soru ekle\n2.) Sınava başla\n3.) Çıkış\n")
 
-    if islem   == "1":
+    if islem == "1":
         # Soru eklemeyi sadece admin and editor yapabilmesi için gerekli kod dizini.
         access = input("Username(admin/editor): ").lower().strip()
         password = input("password(112233): ").strip()
@@ -232,5 +255,3 @@ while True:
 """
     Ufak bir mantık hatası, gözden kaçan, önemsiz gibi gözüküp, kod dizininin iskeletini oluşturan şey sizi tüm gün uğraştırabilir... :)
 """
-
-
