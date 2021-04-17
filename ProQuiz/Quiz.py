@@ -120,7 +120,7 @@ class Quiz:
 
         way = os.path.dirname(os.path.abspath(__file__))
 
-        if os.path.isfile(f"{way}/users"):
+        if os.path.isdir(f"{way}/users"):
             path = f"{way}/users/{isim}_{soyisim}"
             path = path.replace('\\', '/')
         else:
